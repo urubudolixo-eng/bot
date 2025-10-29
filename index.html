@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Minecraft Alt Web Bot</title>
+  <link rel="icon" href="data:,">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+    body { 
+      font-family: 'Courier New', monospace; 
+      text-align: center; 
+      background: linear-gradient(135deg, #0f0f0f, #1a1a1a); 
+      color: #0f0; 
+      padding: 40px; 
+      margin: 0;
+    }
+    h1 { font-family: 'Orbitron', sans-serif; color: #0f0; text-shadow: 0 0 10px #0f0; }
+    input, button { 
+      padding: 14px; margin: 8px; font-size: 16px; border: 2px solid #0f0; 
+      background: #000; color: #0f0; border-radius: 8px;
+    }
+    button { background: #0f0; color: #000; cursor: pointer; font-weight: bold; }
+    button:hover { background: #0c0; box-shadow: 0 0 15px #0f0; }
+    #log { 
+      margin-top: 20px; color: #fff; background: #000; padding: 15px; 
+      height: 250px; overflow-y: auto; text-align: left; border: 1px solid #0f0; 
+      border-radius: 8px; font-size: 14px;
+    }
+    .status { color: #0f0; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>🔥 ENTRAR NO MUNDO COM ALT</h1>
+  <p>Digite o IP do servidor e o nome da alt → clica e entra!</p>
+
+  <input type="text" id="ip" placeholder="IP:PORTA (ex: localhost:25565)" value="localhost:25565" />
+  <br/>
+  <input type="text" id="username" placeholder="Nome da Alt (opcional)" />
+  <br/>
+  <button onclick="entrar()">🚀 ENTRAR NO MUNDO</button>
+
+  <div id="log" class="status">Status: Aguardando conexão...</div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const log = document.getElementById('log');
+
+    function addLog(msg) {
+      const div = document.createElement('div');
+      div.innerHTML = msg;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function entrar() {
+      const ip = document.getElementById('ip').value.trim();
+      const username = document.getElementById('username').value.trim();
+
+      if (!ip) return alert('IP obrigatório!');
+      socket.emit('spawn', { ip, username });
+      addLog(`<span style="color:#0f0">Enviando ${username || 'AltAnônima'} → ${ip}</span>`);
+    }
+
+    socket.on('log', (msg) => addLog(msg));
+    socket.on('error', (err) => addLog(`<span style="color:red">ERRO: ${err}</span>`));
+  </script>
+</body>
+</html>
